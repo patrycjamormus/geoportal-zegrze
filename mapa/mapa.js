@@ -1,5 +1,10 @@
 $(document).ready(function () {
-  let map = L.map("map").setView([52.449720, 21.034916], 14);
+  var geoserverUrl = "http://localhost:8080/geoserver";
+  var selectedPoint = null;
+  var source = null;
+  var target = null;
+
+  let map = L.map("map").setView([52.44972, 21.034916], 14);
 
   let danezOSM = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -7,6 +12,7 @@ $(document).ready(function () {
   let danezORTO = L.tileLayer(
     "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution"
   );
+
 
   //zrodlo 3
   let rzeczki = L.tileLayer.wms(
@@ -17,7 +23,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
   // map.addLayer(rzeczki)
 
@@ -29,9 +34,8 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
-  
+
   let BUIN = L.tileLayer.wms(
     "http://localhost:8080/geoserver/geoportal_zegrze/wms",
     {
@@ -40,7 +44,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTGN = L.tileLayer.wms(
@@ -51,7 +54,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTKM = L.tileLayer.wms(
@@ -62,7 +64,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTLZ = L.tileLayer.wms(
@@ -73,7 +74,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTNZ = L.tileLayer.wms(
@@ -84,7 +84,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTPL = L.tileLayer.wms(
@@ -95,7 +94,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTRK = L.tileLayer.wms(
@@ -106,7 +104,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTTR = L.tileLayer.wms(
@@ -117,7 +114,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTUT = L.tileLayer.wms(
@@ -128,7 +124,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTWZ = L.tileLayer.wms(
@@ -139,7 +134,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let PTZB = L.tileLayer.wms(
@@ -150,7 +144,6 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let SKDR = L.tileLayer.wms(
@@ -161,10 +154,8 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
-  
   let kompozycja = L.tileLayer.wms(
     "http://localhost:8080/geoserver/geoportal_zegrze/wms",
     {
@@ -173,35 +164,92 @@ $(document).ready(function () {
       transparent: "true",
       version: "1.1.1",
     }
-    
   );
 
   let baseMaps = {
     "dane z OSM": danezOSM,
     "dane z ORTO": danezORTO,
-    "dane z BDOT10k":kompozycja,
+    "dane z BDOT10k": kompozycja,
   };
-  
-  let overlayMaps = {
-  
-    "rzeczki":rzeczki,
-    "budowle inżynierskie":BUIN,
-    "grunty nieużytkowane":PTGN,
-    "tereny pod drogami kołowymi, szynowymi i lotniskowymi":PTKM,
-    "tereny leśny i zadrzewiony":PTLZ,
-    "pozostały teren niezabudowany":PTNZ,
-    "place":PTPL,
-    "roślinność krzewiasta":PTRK,
-    "roślinność trawiasta i uprawa rolna":PTTR,
-    "uprawa trwała":PTUT,
-    "wyrobisko i zwałowisko":PTWZ,
-    "tereny zabudowane":PTZB,
-    "drogi":SKDR,
-    "budynki":BUBD,
 
+  let overlayMaps = {
+    rzeczki: rzeczki,
+    "budowle inżynierskie": BUIN,
+    "grunty nieużytkowane": PTGN,
+    "tereny pod drogami kołowymi, szynowymi i lotniskowymi": PTKM,
+    "tereny leśny i zadrzewiony": PTLZ,
+    "pozostały teren niezabudowany": PTNZ,
+    place: PTPL,
+    "roślinność krzewiasta": PTRK,
+    "roślinność trawiasta i uprawa rolna": PTTR,
+    "uprawa trwała": PTUT,
+    "wyrobisko i zwałowisko": PTWZ,
+    "tereny zabudowane": PTZB,
+    drogi: SKDR,
+    budynki: BUBD,
   };
+
+  var pathLayer = L.geoJSON(null);
 
   L.control.layers(baseMaps, overlayMaps).addTo(map);
 
   map.addLayer(danezOSM);
-});
+
+  var sourceMarker = L.marker([52.22786, 21.02153], {
+    draggable: true,
+  })
+    .on("dragend", function (e) {
+      selectedPoint = e.target.getLatLng();
+      getVertex(selectedPoint);
+      getRoute();
+    })
+    .addTo(map);
+
+  var targetMarker = L.marker([52.22876, 21.021653], {
+    draggable: true,
+  })
+    .on("dragend", function (e) {
+      selectedPoint = e.target.getLatLng();
+      getVertex(selectedPoint);
+      getRoute();
+    })
+    .addTo(map);
+
+  function getVertex(selectedPoint) {
+    var url = `${geoserverUrl}/geoportal_zegrze/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoportal_zegrze%3Anearest_vertex&maxFeatures=50&outputFormat=application%2Fjson&viewparams=x:${selectedPoint.lng};y:${selectedPoint.lat};`;
+    $.ajax({
+      url: url,
+      async: false,
+      success: function (data) {
+        console.log(data)
+        loadVertex(
+          data,
+          selectedPoint.toString() === sourceMarker.getLatLng().toString()
+        );
+      },
+    });
+  }
+
+  function loadVertex(response, isSource) {
+    var features = response.features;
+    map.removeLayer(pathLayer);
+    if (isSource) {
+      source = features[0].properties.id;
+    } else target = features[0].properties.id;
+  }
+
+  function getRoute(){
+
+var url = `${geoserverUrl}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoportal_zegrze%3Ashortest_path&maxFeatures=50&outputFormat=application%2Fjson&=source:${source};target:${target};`;
+
+$.getJSON(url, function(data) {
+  map.removeLayer(pathLayer);
+  pathLayer = L.geoJSON(data);
+  map.addLayer(pathLayer);});
+}
+
+  }
+
+);
+
+
