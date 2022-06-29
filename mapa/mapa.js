@@ -216,9 +216,11 @@ $(document).ready(function () {
     .addTo(map);
 
   function getVertex(selectedPoint) {
-    var url = `${geoserverUrl}/geoportal_zegrze/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoportal_zegrze%3Anearest_vertex&maxFeatures=50&outputFormat=application%2Fjson&viewparams=x:${selectedPoint.lng};y:${selectedPoint.lat};`;
-    $.ajax({
-      url: url,
+    var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0
+    &request=GetFeature&typeName=geoportal_zegrze:nearest_vertex
+    &viewparams=x:${selectedPoint.lng};y:${selectedPoint.lat};&outputformat=application/json`
+    $.ajax({  
+    url: url,
       async: false,
       success: function (data) {
         console.log(data)
@@ -240,7 +242,10 @@ $(document).ready(function () {
 
   function getRoute(){
 
-var url = `${geoserverUrl}/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=geoportal_zegrze%3Ashortest_path&maxFeatures=50&outputFormat=application%2Fjson&=source:${source};target:${target};`;
+var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0
+&request=GetFeature&typeName=geoportal_zegrze:shortest_path
+&viewparams=source:${source};target:${target};
+&outputformat=application/json`;
 
 $.getJSON(url, function(data) {
   map.removeLayer(pathLayer);
