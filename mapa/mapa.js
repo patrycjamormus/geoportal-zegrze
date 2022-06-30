@@ -214,6 +214,32 @@ $(document).ready(function () {
       getRoute();
     })
     .addTo(map);
+// LOKALIZACJA !!!!
+mymap.locate({setView:true, maxZoom:10});
+
+//function nazwaFunkcji(parametr){
+  // return parametr+2
+// }
+
+  //function nazwaFunckji(argument/parametr){return parametr+2}
+  function onLocationFound(e) {
+    let radius = e.accuracy; // szerokość wielkosć markera lokalizacji na podstawie geokodowania sieci na której się logujemy/ wilekoś m markera proporcjonalna do lokalizacji
+    L.marker(e.latlng) 
+    .addTo(mymap)
+    .bindPopup(`Znajdujesz się w promieniu ${radius} metrów od tego punktu`)
+    .openPopup();
+  L.circle(e.latlng, radius).addTo(mymap);
+   }
+   
+   function onLocationError(e) {
+    alert(e.message);
+  }
+
+function onLocationError(e) {
+  alert(e.message);
+}
+mymap.on("locationerror", onLocationError);
+mymap.on("locationfound", onLocationFound);
 
   function getVertex(selectedPoint) {
     var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0
