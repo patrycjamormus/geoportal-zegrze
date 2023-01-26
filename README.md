@@ -1,1 +1,0 @@
-# patrycjamormus.github.io
