@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  postgis:
+    image: postgis/postgis:13-3.1-alpine
+    container_name: postgis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=geoportal  # Add database name
+    ports:
+      - "65432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+
+  geoserver:
+    image: docker.osgeo.org/geoserver:2.25.x
+    container_name: geoserver
+    environment:
+      - GEOSERVER_ADMIN_USER=admin
+      - GEOSERVER_ADMIN_PASSWORD=geoserver
+    ports:
+      - "8090:8080"
+    depends_on:
+      - postgis  # Ensure postgis starts before geoserver
+
+  website:
+    build: .
+    image: nginx
+    container_name: website_geoportal
+    volumes:
+      - ./:/usr/share/nginx/html
+    ports:
+      - "8000:80"
+    tty: true
+
+
+#  mapa:
+#    build:
+#      context: ./mapa
+#    image: nginx
+#    container_name: map_geoportal
+#    volumes:
+#      - ./mapa:/usr/share/nginx/html
+#    ports:
+#      - "8001:80"
+
+
+volumes:
+  postgis_data:
+    driver: local
