@@ -1,0 +1,22 @@
+version: '3'
+services:
+  homepage:
+    build: .
+    image: nginx:latest
+    container_name: 'homepage_geoportal'
+    volumes:
+      - ./:/usr/share/nginx/html
+    ports:
+      - "8000:80"
+    tty: true
+
+  mapa:
+    build:
+      context: ./mapa
+    image: nginx:latest
+    container_name: 'map_geoportal'
+    volumes:
+      - ./mapa:/usr/share/nginx/html
+    ports:
+      - "8001:80"
+    tty: true
