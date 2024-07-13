@@ -1,10 +1,10 @@
 $(document).ready(function () {
-        var geoserverUrl = "http://localhost:8080/geoserver";
+        var geoserverUrl = "http://localhost:8090/geoserver";
         var selectedPoint = null;
         var source = null;
         var target = null;
 
-        let map = L.map("map").setView([52.44972, 21.034916], 14);
+        let map = L.map("map").setView([52.44972, 21.034916], 20);
 
         let danezOSM = L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -13,12 +13,12 @@ $(document).ready(function () {
             "https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMTS/StandardResolution"
         );
 
-
+// http://localhost:8090/geoserver/geoportal/wms?service=WMS&version=1.1.0&request=GetMap&layers=geoportal%3AOT_PTWP_A&bbox=622957.5625%2C508112.28125%2C647327.0625%2C517000.125&width=768&height=330&srs=EPSG%3A2180&styles=&format=image%2Fpng
         //zrodlo 3
         let rzeczki = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms?",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "geoportal_zegrze:OT_PTWP_A",
+                layers: "geoportal:OT_PTWP_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -27,19 +27,34 @@ $(document).ready(function () {
         // map.addLayer(rzeczki)
 
         let BUBD = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            // http://localhost:8090/geoserver/geoportal/wms?
+            // service=WMS&version=1.1.0&
+            // request=GetMap&
+            // layers=geoportal%3AIgrupa&
+            // bbox=637567.8%2C512382.05%2C637727.76%2C512415.58&
+            // width=768&height=330&
+            // srs=EPSG%3A2180&
+            // styles=&
+            // format=image%2Fpng
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_BUBD_A",
+                layers: "geoportal:OT_BUBD_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
             }
+            //             {
+            //     layers: "geoportal:OT_BUBD_A",
+            //     format: "image/png",
+            //     transparent: "true",
+            //     version: "1.1.1",
+            // }
         );
 
         let BUIN = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_BUIN_L",
+                layers: "geoportal:OT_BUIN_L",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -47,9 +62,9 @@ $(document).ready(function () {
         );
 
         let PTGN = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTGN_A",
+                layers: "geoportal:OT_PTGN_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -57,9 +72,9 @@ $(document).ready(function () {
         );
 
         let PTKM = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTKM_A",
+                layers: "geoportal:OT_PTKM_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -67,9 +82,9 @@ $(document).ready(function () {
         );
 
         let PTLZ = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTLZ_A",
+                layers: "geoportal:OT_PTLZ_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -77,9 +92,9 @@ $(document).ready(function () {
         );
 
         let PTNZ = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTNZ_A",
+                layers: "geoportal:OT_PTNZ_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -87,9 +102,9 @@ $(document).ready(function () {
         );
 
         let PTPL = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTPL_A",
+                layers: "geoportal:OT_PTPL_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -97,9 +112,9 @@ $(document).ready(function () {
         );
 
         let PTRK = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTRK_A",
+                layers: "geoportal:OT_PTRK_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -107,9 +122,9 @@ $(document).ready(function () {
         );
 
         let PTTR = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTTR_A",
+                layers: "geoportal:OT_PTTR_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -117,9 +132,9 @@ $(document).ready(function () {
         );
 
         let PTUT = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTUT_A",
+                layers: "geoportal:OT_PTUT_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -127,9 +142,9 @@ $(document).ready(function () {
         );
 
         let PTWZ = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTWZ_A",
+                layers: "geoportal:OT_PTWZ_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -137,9 +152,9 @@ $(document).ready(function () {
         );
 
         let PTZB = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_PTZB_A",
+                layers: "geoportal:OT_PTZB_A",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -147,9 +162,9 @@ $(document).ready(function () {
         );
 
         let SKDR = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:OT_SKDR_L",
+                layers: "geoportal:OT_SKDR_L",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -157,9 +172,9 @@ $(document).ready(function () {
         );
 
         let kompozycja = L.tileLayer.wms(
-            "http://localhost:8080/geoserver/geoportal_zegrze/wms",
+            "http://localhost:8090/geoserver/geoportal/wms?",
             {
-                layers: "	geoportal_zegrze:kompozycja_warstw",
+                layers: "geoportal:kompozycja_warstw",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -169,7 +184,7 @@ $(document).ready(function () {
         let Igrupa = L.tileLayer.wms(
             "http://localhost:8080/geoserver/geoportal_zegrze/wms",
             {
-                layers: "	geoportal_zegrze:Igrupa",
+                layers: "geoportal:Igrupa",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -179,7 +194,7 @@ $(document).ready(function () {
         let IIgrupa = L.tileLayer.wms(
             "http://localhost:8080/geoserver/geoportal_zegrze/wms",
             {
-                layers: "	geoportal_zegrze:IIgrupa",
+                layers: "geoportal:IIgrupa",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -189,7 +204,7 @@ $(document).ready(function () {
         let IIIgrupa = L.tileLayer.wms(
             "http://localhost:8080/geoserver/geoportal_zegrze/wms",
             {
-                layers: "	geoportal_zegrze:IIIgrupa",
+                layers: "geoportal:IIIgrupa",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -199,7 +214,7 @@ $(document).ready(function () {
         let kompozycjapomiary = L.tileLayer.wms(
             "http://localhost:8080/geoserver/geoportal_zegrze/wms",
             {
-                layers: "	geoportal_zegrze:kompozycja_pomiary",
+                layers: "geoportal:kompozycja_pomiary",
                 format: "image/png",
                 transparent: "true",
                 version: "1.1.1",
@@ -270,10 +285,10 @@ $(document).ready(function () {
         function onLocationFound(e) {
             let radius = e.accuracy; // szerokość wielkosć markera lokalizacji na podstawie geokodowania sieci na której się logujemy/ wilekoś m markera proporcjonalna do lokalizacji
             L.marker(e.latlng)
-                .addTo(mymap)
+                .addTo(map)
                 .bindPopup(`Znajdujesz się w promieniu ${radius} metrów od tego punktu`)
                 .openPopup();
-            L.circle(e.latlng, radius).addTo(mymap);
+            L.circle(e.latlng, radius).addTo(map);
         }
 
         function onLocationError(e) {
